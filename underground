@@ -1,0 +1,46 @@
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+
+-- Create a ScreenGui and a TextButton
+local screenGui = Instance.new("ScreenGui")
+local toggleButton = Instance.new("TextButton")
+
+-- Set properties for ScreenGui
+screenGui.Name = "ToggleButtonGui"
+screenGui.Parent = player:WaitForChild("PlayerGui")
+
+-- Set properties for TextButton
+toggleButton.Name = "InvisibleButton"
+toggleButton.Size = UDim2.new(0, 100, 0, 50)
+toggleButton.Position = UDim2.new(1, -120, 0, 20) -- Right side of the screen
+toggleButton.Text = "Invisible"
+toggleButton.Parent = screenGui
+
+local isUnderground = false
+
+-- Function to toggle underground state
+local function toggleUnderground()
+    if isUnderground then
+        -- Move character above ground
+        humanoidRootPart.Position = humanoidRootPart.Position + Vector3.new(0, 10, 0)
+
+        -- Check for ground position and adjust accordingly
+        local ray = Ray.new(humanoidRootPart.Position, Vector3.new(0, -50, 0))
+        local hit, position = game.Workspace:FindPartOnRay(ray)
+
+        if hit then
+            -- Set the position slightly above the ground
+            humanoidRootPart.Position = position + Vector3.new(0, 0.5, 0) -- Adjust height above ground (lowered to 2)
+        end
+        
+        isUnderground = false
+    else
+        -- Move character underground
+        humanoidRootPart.Position = humanoidRootPart.Position - Vector3.new(0, 10, 0)
+        isUnderground = true
+    end
+end
+
+-- Connect button click to toggle function
+toggleButton.MouseButton1Click:Connect(toggleUnderground)
